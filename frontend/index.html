@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scarlet Nexus - AI Writing Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background Particles -->
+    <div class="particles">
+        <div class="particle" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="particle" style="top: 30%; left: 80%; animation-delay: 1s;"></div>
+        <div class="particle" style="top: 70%; left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="top: 85%; left: 70%; animation-delay: 1.5s;"></div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="logo-text">
+                    <div class="tagline">AI Writing Assistant</div>
+                </div>
+            </div>
+            
+            <div class="ai-status">
+                <span class="ai-indicator ai-offline">
+                    <i class="fas fa-robot"></i> AI: Simulasi ⚠️
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control Panel (Left Side) -->
+        <section class="control-panel">
+            <div class="panel-header">
+                <div class="panel-icon">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <h2>Kontrol Konten</h2>
+            </div>
+
+            <!-- Template Selector -->
+            <div class="template-section">
+                <div class="section-title">
+                    <i class="fas fa-th-large"></i>
+                    <h3>Template Cepat</h3>
+                </div>
+                
+                <div class="template-grid">
+                    <div class="template-btn active" data-template="product">
+                        <div class="template-icon">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div class="template-name">Deskripsi Produk</div>
+                        <div class="template-desc">Buat deskripsi produk yang menarik dan persuasif</div>
+                    </div>
+                    
+                    <div class="template-btn" data-template="social">
+                        <div class="template-icon">
+                            <i class="fas fa-hashtag"></i>
+                        </div>
+                        <div class="template-name">Konten Media Sosial</div>
+                        <div class="template-desc">Buat konten untuk Instagram, Facebook, Twitter</div>
+                    </div>
+                    
+                    <div class="template-btn" data-template="article">
+                        <div class="template-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div class="template-name">Artikel Blog</div>
+                        <div class="template-desc">Tulis artikel blog yang SEO friendly</div>
+                    </div>
+                    
+                    <div class="template-btn" data-template="ad">
+                        <div class="template-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="template-name">Iklan Lokal</div>
+                        <div class="template-desc">Copy iklan dengan nuansa Indonesia autentik</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Inputs -->
+            <div class="input-section">
+                <div class="section-title">
+                    <i class="fas fa-edit"></i>
+                    <h3>Instruksi Konten</h3>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-label">
+                        <i class="fas fa-tag"></i>
+                        <label for="topic">Topik/Kata Kunci:</label>
+                    </div>
+                    <input type="text" id="topic" placeholder="Contoh: Promosi Kopi Kekinian dari Biji Lokal Nusantara">
+                </div>
+
+                <!-- NADA SUARA TELAH DIHAPUS -->
+
+                <div class="input-group">
+                    <div class="input-label">
+                        <i class="fas fa-info-circle"></i>
+                        <label for="details">Detail Tambahan:</label>
+                    </div>
+                    <textarea id="details" rows="3" placeholder="Misal: untuk semua pengguna media sosial 18 tahun ke atas..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <div class="slider-container">
+                        <div class="slider-value">
+                            <span><i class="fas fa-ruler"></i> Panjang Konten:</span>
+                            <span id="length-value">150 kata</span>
+                        </div>
+                        <input type="range" id="length" min="50" max="500" value="150">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Local Terms -->
+            <div class="local-terms-section">
+                <div class="section-title">
+                    <i class="fas fa-language"></i>
+                    <h3>Istilah Lokal Indonesia</h3>
+                </div>
+                <div id="local-terms" class="local-terms-grid">
+                    <!-- Terms will be loaded by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button id="generate-btn" class="btn btn-primary glow-effect">
+                    <i class="fas fa-bolt"></i> Generate
+                </button>
+                <button id="copy-btn" class="btn btn-secondary">
+                    <i class="far fa-copy"></i> Salin
+                </button>
+                <button id="improve-btn" class="btn btn-warning">
+                    <i class="fas fa-wand-magic-sparkles"></i> Perbaiki
+                </button>
+                <button id="localize-btn" class="btn btn-info">
+                    <i class="fas fa-globe-asia"></i> Lokalisasi
+                </button>
+            </div>
+        </section>
+
+        <!-- Output Panel (Right Side) -->
+        <section class="output-panel">
+            <div class="output-header">
+                <h2>Hasil Konten</h2>
+                <div class="word-count">
+                    <i class="fas fa-font"></i>
+                    <span id="word-count">0 kata</span>
+                </div>
+            </div>
+
+            <div id="output-content" class="output-content">
+                <div class="output-placeholder">
+                    <div class="placeholder-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Konten Akan Muncul Di Sini</h3>
+                    <p>Pilih template, isi instruksi, dan klik "Generate" untuk membuat konten AI-powered!</p>
+                </div>
+            </div>
+
+            <!-- Meta Info -->
+            <div class="meta-info">
+                <div class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Informasi Konten</h3>
+                </div>
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <div class="meta-icon">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <div class="meta-text">
+                            <span>Template</span>
+                            <strong id="meta-template">-</strong>
+                        </div>
+                    </div>
+                    <!-- META NADA SUARA TELAH DIHAPUS -->
+                    <div class="meta-item">
+                        <div class="meta-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="meta-text">
+                            <span>Waktu</span>
+                            <strong id="meta-time">-</strong>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="meta-text">
+                            <span>AI Mode</span>
+                            <strong id="meta-mode">Demo</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Actions -->
+            <div class="output-actions">
+                <button id="download-btn" class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <button id="share-btn" class="btn btn-secondary">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+                <button id="clear-btn" class="btn btn-secondary">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>🔥 Dibuat dengan <span class="heart">❤️</span> untuk konten lokal Indonesia | 
+           <span class="api-status">
+               <i class="fas fa-server"></i> API: 
+               <span id="api-url" class="api-url">http://localhost:3000</span>
+               <span id="backend-status" class="status-offline">Offline</span>
+           </span>
+        </p>
+        <p class="copyright">© 2024 Scarlet Nexus AI Assistant v2.0</p>
+    </footer>
+
+    <script src="script.js"></script>
+    
+    <!-- Additional CSS for particles -->
+    <style>
+        /* Particles Animation */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--scarlet-primary);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: particle-float 15s infinite linear;
+        }
+        
+        @keyframes particle-float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        /* Heart Animation */
+        .heart {
+            display: inline-block;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            color: var(--scarlet-primary);
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Placeholder Styling */
+        .output-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            color: #666;
+            padding: 3rem;
+        }
+        
+        .placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--noir-gray);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .placeholder-icon i {
+            font-size: 4rem;
+        }
+        
+        .output-placeholder h3 {
+            color: #aaa;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .output-placeholder p {
+            color: #777;
+            max-width: 400px;
+            line-height: 1.6;
+        }
+        
+        /* API Status in Footer */
+        .api-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 20px;
+            padding: 6px 12px;
+            background: rgba(42, 42, 42, 0.5);
+            border-radius: 20px;
+        }
+        
+        .api-url {
+            color: var(--scarlet-light);
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        #backend-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-online {
+            background: rgba(6, 214, 160, 0.2);
+            color: #06d6a0;
+            border: 1px solid rgba(6, 214, 160, 0.3);
+        }
+        
+        .status-offline {
+            background: rgba(230, 57, 70, 0.2);
+            color: #e63946;
+            border: 1px solid rgba(230, 57, 70, 0.3);
+        }
+        
+        /* Copyright */
+        .copyright {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #666;
+            letter-spacing: 1px;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .api-status {
+                display: block;
+                margin: 10px 0;
+            }
+            
+            .output-placeholder {
+                padding: 2rem;
+            }
+            
+            .placeholder-icon {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</body>
+</html>
