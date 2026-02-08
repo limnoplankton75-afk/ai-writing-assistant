@@ -412,21 +412,27 @@ app.use((err, req, res, next) => {
 
 // ==================== START SERVER ====================
 
-const PORT = config.port;
-app.listen(PORT, () => {
-    console.log(`\n🚀 SERVER BERJALAN`);
-    console.log(`📍 Port: http://localhost:${PORT}`);
-    console.log(`🌐 Frontend: ${config.frontendUrl}`);
-    console.log(`🤖 AI Mode: ${config.aiConfig.useRealAI ? 'REAL ✅' : 'DEMO ⚠️'}`);
-    console.log(`📊 API Status: http://localhost:${PORT}/api/health`);
-    console.log(`📋 Templates: http://localhost:${PORT}/api/templates`);
-    console.log(`🔧 Config: http://localhost:${PORT}/api/config/info`);
-    console.log('========================================\n');
-    
-    // Validasi config
-    const errors = config.validate();
-    if (errors.length > 0) {
-        console.warn('⚠️  PERINGATAN KONFIGURASI:');
-        errors.forEach(error => console.warn(`   • ${error}`));
-    }
-});
+// Jalankan server hanya di local development
+if (require.main === module) {
+    const PORT = config.port || 3000;
+    app.listen(PORT, () => {
+        console.log('\n🚀 SERVER BERJALAN');
+        console.log(`📍 Port: http://localhost:${PORT}`);
+        console.log(`🌐 Frontend: ${config.frontendUrl}`);
+        console.log(`🤖 AI Mode: ${config.aiConfig.useRealAI ? 'REAL ✅' : 'DEMO ⚠️'}`);
+        console.log(`📊 API Status: http://localhost:${PORT}/api/health`);
+        console.log(`📋 Templates: http://localhost:${PORT}/api/templates`);
+        console.log(`🔧 Config: http://localhost:${PORT}/api/config/info`);
+        console.log('========================================\n');
+        
+        // Validasi config
+        const errors = config.validate();
+        if (errors.length > 0) {
+            console.warn('⚠️  PERINGATAN KONFIGURASI:');
+            errors.forEach(error => console.warn(`   • ${error}`));
+        }
+    });
+}
+
+// Export untuk Vercel serverless function
+module.exports = app;
