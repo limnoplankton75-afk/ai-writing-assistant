@@ -1,16 +1,18 @@
 {
   "name": "ai-writing-assistant",
   "version": "1.0.0",
-  "description": "- Generator konten dengan nuansa Indonesia\r - Template untuk berbagai jenis konten\r - Database istilah lokal\r - API RESTful backend",
-  "main": "index.js",
+  "description": "AI Writing Assistant with Indonesian locale support",
+  "main": "api/index.js",
   "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/limnoplankton75-afk/ai-writing-assistant.git"
   },
-  "keywords": [],
+  "keywords": ["ai", "writing", "assistant", "indonesia"],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -20,6 +22,10 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "groq-sdk": "^0.37.0"
+    "groq-sdk": "^0.37.0",
+    "dotenv": "^16.0.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
