@@ -1,6 +1,6 @@
 ﻿// api/index.js - SIMPLE WORKING VERSION
 module.exports = (req, res) => {
-  console.log(\`\${new Date().toISOString()} - \${req.method} \${req.url}\`);
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Access-Control-Allow-Origin", "*");
