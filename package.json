@@ -1,31 +1,21 @@
-{
+﻿{
   "name": "ai-writing-assistant",
   "version": "1.0.0",
-  "description": "AI Writing Assistant with Indonesian locale support",
+  "description": "AI Writing Assistant API",
   "main": "api/index.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "dev": "node backend/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node api/index.js",
+    "dev": "node api/index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/limnoplankton75-afk/ai-writing-assistant.git"
-  },
-  "keywords": ["ai", "writing", "assistant", "indonesia"],
+  "keywords": ["ai", "writing", "assistant", "api"],
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/limnoplankton75-afk/ai-writing-assistant/issues"
-  },
-  "homepage": "https://github.com/limnoplankton75-afk/ai-writing-assistant#readme",
+  "license": "MIT",
   "dependencies": {
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "groq-sdk": "^0.37.0",
-    "dotenv": "^16.0.0"
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
   },
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   }
 }

@@ -1,109 +1,64 @@
-// api/index.js - Vercel Serverless Function
-const express = require('express');
-const cors = require('cors');
-const Groq = require('groq-sdk');
+// api/index.js - CORRECT SERVERLESS FUNCTION
+const Groq = require("groq-sdk");
 
-const app = express();
-
-// Middleware
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Initialize Groq
+// Initialize Groq client
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || ''
+  apiKey: process.env.GROQ_API_KEY
 });
 
-// Root endpoint
-app.get('/', (req, res) => {
-  res.json({
-    name: 'AI Writing Assistant API',
-    version: '1.0.0',
-    status: 'running',
-    endpoints: {
-      health: '/api/health',
-      generate: '/api/generate (POST)'
-    },
-    timestamp: new Date().toISOString()
-  });
-});
+module.exports = async (req, res) => {
+  // Handle CORS
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'API is running',
-    apiKeyConfigured: !!process.env.GROQ_API_KEY,
-    timestamp: new Date().toISOString()
-  });
-});
+  // Handle OPTIONS for CORS preflight
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
-// Generate content
-app.post('/api/generate', async (req, res) => {
+  // Only allow POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
-    if (!process.env.GROQ_API_KEY) {
-      return res.status(500).json({
-        error: 'API key not configured'
-      });
-    }
-
-    const { prompt, contentType, tone, length } = req.body;
+    const { prompt, model = "llama3-70b-8192" } = req.body;
 
     if (!prompt) {
-      return res.status(400).json({
-        error: 'Missing required field: prompt'
-      });
+      return res.status(400).json({ error: 'Prompt is required' });
     }
 
-    let systemMessage = 'Anda adalah asisten AI untuk menulis konten dalam bahasa Indonesia.';
-    
-    if (contentType) systemMessage += ` Tulis ${contentType}.`;
-    if (tone) systemMessage += ` Gunakan tone ${tone}.`;
-    if (length) systemMessage += ` Panjang: ${length}.`;
-
+    // Call Groq API
     const completion = await groq.chat.completions.create({
       messages: [
-        { role: 'system', content: systemMessage },
-        { role: 'user', content: prompt }
+        {
+          role: "user",
+          content: prompt
+        }
       ],
-      model: 'llama-3.3-70b-versatile',
+      model: model,
       temperature: 0.7,
-      max_tokens: 2000
+      max_tokens: 1024
     });
 
-    const content = completion.choices[0]?.message?.content || '';
+    const responseText = completion.choices[0]?.message?.content || "";
 
-    res.json({
+    res.status(200).json({
       success: true,
-      content: content,
-      metadata: {
-        model: completion.model,
-        tokens: completion.usage
-      }
+      response: responseText
     });
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Groq API Error:', error);
     res.status(500).json({
-      error: 'Failed to generate content',
-      message: error.message
+      success: false,
+      error: error.message
     });
   }
-});
-
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `Route ${req.method} ${req.originalUrl} not found`,
-    availableEndpoints: ['/', '/api/health', '/api/generate']
-  });
-});
-
-// Export for Vercel
-module.exports = app;
+};
