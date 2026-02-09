@@ -1,113 +1,93 @@
-// api/index.js - FINAL VERSION
+// api/index.js - FINAL FIXED VERSION
 const Groq = require("groq-sdk");
 
-// Initialize Groq - menggunakan environment variable dari Vercel
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || "dummy-key-for-test"
+  apiKey: process.env.GROQ_API_KEY || "dummy-key"
 });
 
 module.exports = async (req, res) => {
-  // LOG semua request untuk debugging
-  console.log('=== API REQUEST ===');
-  console.log('Method:', req.method);
-  console.log('URL:', req.url);
-  console.log('Time:', new Date().toISOString());
+  console.log(`📨 Request: ${req.method} ${req.url}`);
   
-  // Set CORS headers
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  // Handle OPTIONS preflight
+  // Handle OPTIONS
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
   
-  // Handle GET - API info
+  // Handle semua path (/api, /, dll) sama saja
   if (req.method === 'GET') {
     return res.status(200).json({
       success: true,
-      message: '🚀 AI Writing Assistant API',
+      message: '🤖 AI Writing Assistant API',
       status: 'ONLINE',
-      version: '1.0.0',
-      timestamp: new Date().toISOString(),
       endpoints: {
-        'GET /': 'This info page',
-        'POST /': 'Send JSON {prompt: "your message"}',
+        'GET /': 'API info',
+        'POST /': 'Send {prompt: "your message"}',
         'GET /api': 'Same as GET /',
         'POST /api': 'Same as POST /'
       },
       example: {
-        curl: "curl -X POST https://ai-writing-assistant.vercel.app/api -H 'Content-Type: application/json' -d '{\"prompt\":\"Hello AI!\"}'"
+        curl: 'curl -X POST https://ai-writing-assistant.vercel.app/api -H "Content-Type: application/json" -d \'{"prompt":"Hello"}\''
       }
     });
   }
   
-  // Handle POST - Process AI request
   if (req.method === 'POST') {
     try {
-      // Parse JSON body
       let body = '';
       req.on('data', chunk => body += chunk.toString());
       
       req.on('end', async () => {
         try {
           const data = JSON.parse(body || '{}');
-          const { prompt, model = "llama3-70b-8192" } = data;
+          const { prompt } = data;
           
-          // Validate input
-          if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
+          if (!prompt) {
             return res.status(400).json({
               success: false,
-              error: 'Prompt is required and must be a non-empty string'
+              error: 'Prompt is required'
             });
           }
           
-          console.log('Processing prompt:', prompt.substring(0, 50) + '...');
+          console.log(`Processing: "${prompt.substring(0, 30)}..."`);
           
-          // Call Groq API
           const completion = await groq.chat.completions.create({
-            messages: [{ role: "user", content: prompt.trim() }],
-            model: model,
+            messages: [{ role: "user", content: prompt }],
+            model: "llama3-70b-8192",
             temperature: 0.7,
             max_tokens: 500
           });
           
-          const responseText = completion.choices[0]?.message?.content || "";
+          const response = completion.choices[0]?.message?.content || "";
           
-          console.log('Response generated:', responseText.substring(0, 50) + '...');
-          
-          // Success response
           return res.status(200).json({
             success: true,
-            response: responseText,
+            response: response,
             model: completion.model,
-            usage: completion.usage || null,
-            timestamp: new Date().toISOString()
+            usage: completion.usage
           });
           
-        } catch (parseError) {
-          console.error('JSON Parse Error:', parseError);
+        } catch (error) {
           return res.status(400).json({
             success: false,
-            error: 'Invalid JSON format in request body'
+            error: 'Invalid JSON'
           });
         }
       });
       
     } catch (error) {
-      console.error('API Error:', error);
+      console.error('Error:', error);
       return res.status(500).json({
         success: false,
-        error: error.message || 'Internal server error',
-        note: 'Check if GROQ_API_KEY is set in Vercel environment variables'
+        error: error.message
       });
     }
+    return; // Important!
   }
   
-  // Method not allowed
-  return res.status(405).json({
-    success: false,
-    error: 'Method not allowed. Use GET or POST.'
-  });
+  res.status(405).json({ error: 'Method not allowed' });
 };
